@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
@@ -10,9 +11,11 @@ import java.util.Scanner;
  * */
 public class BOJ1753 {
     static int V, E;
-    static final int MAX_W = 10; // 최대 가중치
-    static int[][] Graph;
-    static int[] Dist = new int[MAX_W]; // K에서 V로 가는 최단경로 가중치 저장
+    static final int MAX_WEIGHT = 10; // 최대 가중치
+    //    static int[][] Graph;
+    // 메모리초과로 인해 2차원 배열에서 수정함
+    static ArrayList<Node>[] graph;
+    static int[] cost = new int[MAX_WEIGHT]; // K에서 V로 가는 최단경로 비용 저장
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -20,31 +23,29 @@ public class BOJ1753 {
         V = sc.nextInt(); // 정점의 개수
         E = sc.nextInt(); // 간선의 개수
         sc.nextLine();
-        int K = sc.nextInt(); // 시작 정점의 번호 (1<=K<=V)
-        Graph = new int[V][V];
-        Dist = new int[V];
+        int startV = sc.nextInt(); // 시작 정점의 번호 (1<=K<=V)
+        cost = new int[V + 1];
 
-        for (int i = 0; i < E; i++) {
+        // graph 초기화
+        graph = new ArrayList[V + 1];
+        for (int i = 1; i <= V; i++) {
+            graph[i] = new ArrayList<Node>();
+        }
+        for (int i = 1; i <= E; i++) {
             int u = sc.nextInt();
             int v = sc.nextInt();
             int w = sc.nextInt();
-            Graph[u - 1][v - 1] = w;
+            // u 에서 v로 가는 가중치 w인 간선이 존재
+            graph[u].add(new Node(w, v));
         }
 
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (Graph[i][j] == 0 && i != j) {
-                    // 방향그래프이므로 갈 수 없는 경우 -1 로 표시
-                    Graph[i][j] = -1;
-                }
-            }
-        }
-        for (int v = 0; v < V; v++) {
-            int dist = dijkstra(K, v + 1);
-            if (dist == -1) {
+        for (int v = 1; v <= V; v++) {
+            int cost = dijkstra(startV, v);
+            // 경로가 없는 경우 INF를 출력한다
+            if (cost == -1) {
                 System.out.println("INF");
             } else {
-                System.out.println(dist);
+                System.out.println(cost);
             }
         }
     }
@@ -52,33 +53,54 @@ public class BOJ1753 {
     private static int dijkstra(int src, int dst) {
         if (src == dst) return 0;
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
-        boolean[] visited = new boolean[V];
+        // weight가 가장 적은 것부터 꺼내기 위해 우선순위큐 사용
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> a.weight - b.weight);
+        boolean[] visited = new boolean[V + 1];
 
-        for (int i = 0; i < V; i++) {
-            Dist[i] = Integer.MAX_VALUE;
+        // 일단 최댓값으로 초기화
+        for (int i = 1; i <= V; i++) {
+            cost[i] = Integer.MAX_VALUE;
         }
-        Dist[src - 1] = 0; // 시작점이므로 0으로 설정
-        pq.add(new int[]{0, src});
+
+        // 시작점이므로 비용 0으로 설정
+        cost[src] = 0;
+        pq.add(new Node(0, src));
 
         while (!pq.isEmpty()) {
-            int[] curr = pq.poll();
-            int u = curr[1];
-            if (u == dst) return curr[0];
-            if (visited[u - 1]) continue;
+            Node current = pq.poll();
+            int to = current.destination;
+            if (to == dst) return current.weight;
+            if (visited[to]) continue; //이미 방문한 정점인 경우 패스
 
-            visited[u - 1] = true;
-            for (int v = 0; v < V; ++v) {
-                // 갈 수 없는 경우
-                if (Graph[u - 1][v] == -1) {
-                    continue;
-                }
-                if (Dist[v] > Dist[u - 1] + Graph[u - 1][v]) {
-                    Dist[v] = Dist[u - 1] + Graph[u - 1][v];
-                    pq.add(new int[]{Dist[v], v + 1});
+            // 다음 노드 방문
+            visited[to] = true;
+            for (int i = 0; i < graph[to].size(); i++) {
+                Node next = graph[to].get(i);
+                if (cost[next.destination] > cost[to] + next.weight) {
+                    cost[next.destination] = cost[to]  + next.weight;
+//                    pq.add(new int[]{dist[v], v + 1});
+                    pq.add(new Node(cost[next.destination], next.destination));
                 }
             }
         }
         return -1;
     }
+
+    private static class Node implements Comparable<Node> {
+        int weight;
+        int destination;
+
+        public Node(int weight, int destination) {
+            this.weight = weight;
+            this.destination = destination;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return weight - o.weight;
+        }
+    }
+
+
 }
+
