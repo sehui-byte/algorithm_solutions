@@ -47,9 +47,9 @@ public class BOJ1753 {
             graph[u].add(new Node(w, v));
         }
 
-        for (int v = 1; v <= V; v++) {
             dijkstra(startV);
             // 경로가 없는 경우 INF를 출력한다
+        for (int v = 1; v <= V; v++) {
             if (cost[v] == Integer.MAX_VALUE) {
                 bw.write("INF\n");
             } else {
@@ -84,7 +84,9 @@ public class BOJ1753 {
             int to = current.destination;
 //            if (to == dst) return current.weight;
             if (visited[to]) continue; //이미 방문한 정점인 경우 패스
-            if(current.weight > cost[current.destination]) continue;;
+
+            // 시간초과 해결
+            if(current.weight > cost[current.destination]) continue;
 
             // 다음 노드 방문
             visited[to] = true;
