@@ -6,6 +6,7 @@ import java.util.Scanner;
 /**
  * @문제명 일곱 난쟁이
  * @문제 아홉 난쟁이의 키가 주어졌을 때, 백설공주를 도와 일곱 난쟁이를 찾는 프로그램을 작성
+ * @분류 브루트포스, 조합(combination)
  */
 public class BOJ2309 {
     static int[] height;
