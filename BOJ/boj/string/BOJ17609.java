@@ -3,6 +3,10 @@ package boj.string;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+/**
+ * @문제명 회문
+ * @분류 투포인터, 문자열
+ */
 public class BOJ17609 {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -20,6 +24,9 @@ public class BOJ17609 {
     }
 
     private static int palindrome(int s, int e, String s1, int check) {
+        // 시간초과를 해결하기 위해 아래 조건을 추가함
+        if(check >=2) return 2;
+
         while (s < e) {
             if (s1.charAt(s) == s1.charAt(e)) {
                 s++;
@@ -28,6 +35,6 @@ public class BOJ17609 {
                 return Math.min(palindrome(s + 1, e, s1, check + 1), palindrome(s, e - 1, s1, check + 1));
             }
         }
-        return Math.min(check, 2);
+        return check;
     }
 }
