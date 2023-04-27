@@ -21,25 +21,21 @@ public class BOJ3085 {
                 arr[i][j] = s.charAt(j);
             }
         }
-        find_max();
+        findMax();
     }
 
-    static private void find_max() {
+    static private void findMax() {
         int max = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                int a = countMaxCandyCount(swap(i, j, i, j - 1));
-                int b = countMaxCandyCount(swap(i, j, i, j + 1));
-                int c = countMaxCandyCount(swap(i, j, i + 1, j));
-                int d = countMaxCandyCount(swap(i, j, i - 1, j));
+                //인접한 사탕 swap
+                max = Math.max(countMaxCandyCount(swap(i, j, i, j - 1)), max);
+                max = Math.max(countMaxCandyCount(swap(i, j, i, j + 1)), max);
+                max = Math.max(countMaxCandyCount(swap(i, j, i + 1, j)), max);
+                max = Math.max(countMaxCandyCount(swap(i, j, i - 1, j)), max);
 
-                if (max < a) max = a;
-                if (max < b) max = b;
-                if (max < c) max = c;
-                if (max < d) max = d;
             }
         }
-
         System.out.println(max);
     }
 
@@ -70,7 +66,7 @@ public class BOJ3085 {
 
     static private char[][] swap(int i, int j, int a, int b) {
         if (a < 0 || a > n - 1 || b < 0 || b > n - 1) {
-            return arr;
+            return null;
         }
         // deep copy
         char[][] clone = new char[n][n];
