@@ -1,11 +1,11 @@
-package boj;
+package boj.string;
 
 import java.util.Scanner;
 import java.util.Stack;
 
 /**
  * 1. replaceAll() -> 메모리초과
- * 2. stack을 활용하여 다시 품.
+ * 2. stack을 활용하여 다시 풂.
  */
 public class BOJ9935 {
 
